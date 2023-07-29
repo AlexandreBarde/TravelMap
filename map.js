@@ -1,3 +1,5 @@
+
+
 // Creation of different layers
 
 // Open Street map layer
@@ -97,6 +99,10 @@ var markersLayer = L.layerGroup();
 
 // table of cities with their name, lat and long
 var cities = [
+  ];
+  
+/**
+ * 
     {name: "Toulouse", latlng: [43.604652, 1.444209]},
     {name: "Brive la gaillarde", latlng: [45.158791, 1.531045]},
     {name: "Tulle", latlng: [45.267136, 1.770594]},
@@ -117,11 +123,10 @@ var cities = [
     {name: "Biarritz", latlng: [43.4832, -1.5586]},
     {name: "Bayonne", latlng: [43.4933, -1.4753]},
     {name: "Saint-jean-de-luz", latlng: [43.3916, -1.6619]},
-    { name: "Toronto", latlng: [43.6532, -79.3832] },
-    { name: "Montréal", latlng: [45.5017, -73.5673] },
-    { name: "Ottawa", latlng: [45.4215, -75.6972] }
-  ];
-  
+    {name: "Toronto", latlng: [43.6532, -79.3832] },
+    {name: "Montréal", latlng: [45.5017, -73.5673] },
+    {name: "Ottawa", latlng: [45.4215, -75.6972] }
+ */
 
 // Loop through the list of cities and add each marker to the marker layer
 cities.forEach(function(city) {
@@ -151,23 +156,39 @@ if (map.getZoom() >= 6) {
 });
 
 
-// TO DO : TO BE REMOVED
 
-/** 
-cities.forEach(function(city) {
-    var url = "https://nominatim.openstreetmap.org/search?format=json&q=" + city;
-    fetch(url)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        // Récupération des coordonnées de la première réponse de Nominatim
-        var lat = data[0].lat;
-        var lon = data[0].lon;
+function addCity() {
+    let text;
+    let city = prompt("Please enter a city:", "Paris");
+    if (city == null || city == "") {
+      console.log("User cancelled the prompt.");
+    } else {
+        json = "";
 
-        // Création d'un marqueur à la position de la ville
-        var position = L.latLng(lat, lon);
-        L.marker(position).addTo(map);
-    });
-});
 
-**/
+        fetch('http://127.0.0.1:5000/coordinate?city=' + city).then(function(response) {
+            return response.json();
+          }).then(function(data) {
+            console.log(data);
+            if(data["lat"] == "" || data["lat"] == null) {
+                console.log("Error !");
+            } else {
+                console.log("City ok");
+                addPoint(data["city"], data["long"], data["lat"]);
+            }
+          }).catch(function(err) {
+            console.log('Fetch Error :-S', err);
+          });
+
+    }
+}
+
+function addPoint(city, long, lat) {
+    console.log("reçu !");
+    latlng = [lat, long];
+    var marker = L.marker(latlng);
+    // Add a tooltip to the marker with the name of the city
+    marker.bindPopup(city);
+    // Add the marker to the marker layer
+    markersLayer.addLayer(marker);
+}

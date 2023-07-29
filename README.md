@@ -8,7 +8,7 @@ Dockerfile will be written later.
 ## For local dev
 
 ```bash
-python3 -m http-server
+python3 -m http.server
 ```
 
 Local server is available at [http://localhost:8000](http://localhost:8000).
